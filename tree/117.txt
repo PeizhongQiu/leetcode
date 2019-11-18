@@ -1,1 +1,88 @@
+/*
+// Definition for a Node.
+class Node {
+public:
+    int val;
+    Node* left;
+    Node* right;
+    Node* next;
 
+    Node() {}
+
+    Node(int _val, Node* _left, Node* _right, Node* _next) {
+        val = _val;
+        left = _left;
+        right = _right;
+        next = _next;
+    }
+};
+*/
+class Solution {
+public:
+    Node* connect(Node* root) {
+        if(root&&(root->left||root->right)){
+            if(root->left && root->right) root->left->next = root->right;
+            Node *node = root->right ? root->right : root->left;
+            Node *head = root->next;
+            while (head && !(head->left || head->right)){
+                head = head->next;
+            }
+            node->next = head ? (head->left ? head->left : head->right) : NULL;
+            
+            connect(root->right);
+            connect(root->left);
+        }
+        return root;
+    }
+};
+
+/*
+// Definition for a Node.
+class Node {
+public:
+    int val;
+    Node* left;
+    Node* right;
+    Node* next;
+
+    Node() {}
+
+    Node(int _val, Node* _left, Node* _right, Node* _next) {
+        val = _val;
+        left = _left;
+        right = _right;
+        next = _next;
+    }
+};
+*/
+class Solution {
+public:
+        
+    Node* connect(Node* root) {
+        if(root==NULL) return NULL;
+        root->next=NULL;
+        if(!root->left&&!root->right) return root;
+        queue<Node*> level;
+        vector<int> nodeLevel;
+        level.push(root);
+        int index=0;
+        nodeLevel.push_back(0);
+        Node* temp=level.front();
+        while(!level.empty()){
+            temp=level.front();
+            if(temp->left!=NULL){
+                level.push(temp->left);
+                nodeLevel.push_back(nodeLevel[index]+1);
+            }
+            if(temp->right!=NULL){
+                level.push(temp->right);
+                nodeLevel.push_back(nodeLevel[index]+1);
+            }
+            level.pop();
+            if(level.empty()||nodeLevel[index]<nodeLevel[index+1]) temp->next=NULL;
+            else temp->next=level.front();
+            index++;
+        }
+        return root;
+    }
+};
