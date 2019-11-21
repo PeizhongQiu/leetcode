@@ -1,0 +1,29 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    unordered_map<TreeNode *, int> sums;
+    int rob(TreeNode* root) {
+        if(root==NULL) return 0;
+        if (sums.count(root)) return sums[root];
+        
+        int res1 = 0;
+        if (root->left) {
+            res1 += (rob(root->left->left) + rob(root->left->right));
+        }
+        if (root->right) {
+            res1 += (rob(root->right->left) + rob(root->right->right));
+        }
+        res1 += root->val;
+        int res2 = rob(root->left) + rob(root->right);
+        sums[root] = max(res1, res2);
+        return sums[root];
+    }
+};
