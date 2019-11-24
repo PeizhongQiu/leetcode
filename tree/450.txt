@@ -1,0 +1,85 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    TreeNode *find(TreeNode* root, int key, TreeNode*& tempParent){
+        TreeNode *temp=root;
+        while(temp&&temp->val!=key){
+            tempParent=temp;
+            if(temp->val>key) {
+                temp=temp->left;
+            }
+            else{
+                temp=temp->right;
+            }
+        }
+        return temp;
+    }
+    TreeNode* removeMin(TreeNode*&root){
+        if(!root) return NULL;
+        
+        TreeNode *temp=root;
+        TreeNode *tempParent=root;
+        if(!root->left&&!root->right){
+            root=NULL;
+            return temp;
+        }
+        while(temp->left) {
+            tempParent=temp;
+            temp=temp->left;
+        }
+        if(temp==root){
+            root=root->right;
+            temp->right=NULL;
+            return temp;
+        }
+        tempParent->left=temp->right;
+        temp->right=NULL;
+        return temp;
+    }
+    TreeNode* deleteNode(TreeNode* root, int key) {
+        if(!root) return NULL;
+        if(!root->left&&!root->right&&root->val==key) return NULL;
+        if(!root->left&&!root->right&&root->val!=key) return root;
+        TreeNode *temp=root;
+        TreeNode *tempParent=root;
+        temp=find(root,key,tempParent);
+        if(temp==NULL) return root;
+        
+        if(temp->right==NULL){
+            if(temp==root){
+                return temp->left;
+            }
+            if(tempParent->val>key)
+                tempParent->left=temp->left;
+            else tempParent->right=temp->left;
+        }
+        else{
+            if(temp==root){
+                TreeNode *temp3=removeMin(temp->right);
+                temp3->left=temp->left;
+                temp3->right=temp->right;
+                return temp3;
+            }
+            if(tempParent->val>key){
+                tempParent->left=removeMin(temp->right);
+                
+                tempParent->left->left=temp->left;
+                tempParent->left->right=temp->right;
+            }
+            else {
+                tempParent->right=removeMin(temp->right);
+                tempParent->right->left=temp->left;
+                tempParent->right->right=temp->right;
+            }
+        }
+        return root;
+    }
+};
